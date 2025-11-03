@@ -1,0 +1,99 @@
+<nav class="navbar navbar-expand-lg bg-primary px-3">
+<div class="container-fluid">
+    <a class="navbar-brand fw-bold" href="#">JobBoard</a>
+
+    <div class="d-flex align-items-center gap-3 ms-auto">
+      <!-- Admin Panel Button (Only Visible to Admin) -->
+      @if (isAdmin) {
+        <button class="btn btn-outline-primary" (click)="navigateToAdmin()">
+          Admin Panel
+        </button>
+      }
+
+
+      <button class="btn btn-primary" [routerLink]="['/jobposting']">Post a Job
+</button>
+<button class="btn btn-green" [routerLink]="['/posted-jobs']">Posted Jobs
+</button>
+
+
+      <button (click)="toggle()">
+        <mat-icon [ngClass]="{ 'text-danger': hasFavorited }">
+          {{ hasFavorited ? 'favorite' : 'favorite_border' }}
+        </mat-icon>
+      </button>
+
+
+
+
+
+<button class="btn btn-light ms-4">
+  <mat-icon>share</mat-icon> Share
+</button>
+
+
+      <!-- Modal component -->
+
+
+      <button class="btn position-relative p-0" (click)="toggleDropdown()">
+        <mat-icon class="fs-4">notifications</mat-icon>
+
+        @if (unreadCount > 0) {
+          <span
+            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+            style="font-size: 0.6rem; padding: 4px 6px; transform: translate(-50%, -50%) !important;">
+            {{ unreadCount }}
+          </span>
+        }
+      </button>
+
+
+      <!-- Notification Button -->
+
+      <!-- Dropdown Menu -->
+      @if (dropdownVisible) {
+        <div
+          class="dropdown-menu show p-2"
+          style="right: 10px; top: 5px; position: absolute; z-index: 1050;">
+          <ul class="list-group">
+            @for (n of notifications; track n) {
+              <li
+                class="list-group-item d-flex justify-content-between align-items-start"
+                (click)="markAsRead(n.id)"
+                [class.text-muted]="n.readBy.includes(userId)"
+                style="cursor: pointer;"
+                >
+                <div>
+                  <div class="fw-bold" style="user-select: none;">{{ n.title }}</div>
+                  <small class="text-muted" style="user-select: none;">{{ n.message }}</small>
+                </div>
+                @if (!n.readBy.includes(userId)) {
+                  <span class="badge bg-primary rounded-pill">New</span>
+                }
+              </li>
+            }
+          </ul>
+          @if (notifications.length === 0) {
+            <p class="text-muted m-0">No notifications found.</p>
+          }
+        </div>
+      }
+
+
+
+      <!-- User Avatar -->
+      <button class="btn p-0 border-0 bg-transparent" (click)="openProfileDialog()">
+        <img [src]="imageUrl"
+          alt="profile"
+          class="rounded-circle shadow-sm"
+          width="30"
+          height="30">
+      </button>
+    </div>
+  </div>
+</nav>
+
+
+
+
+

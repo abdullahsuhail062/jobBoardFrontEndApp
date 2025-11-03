@@ -1,0 +1,15 @@
+<!-- admin-notification.component.html -->
+<div class="container mt-4">
+  <h3>Create New Notification</h3>
+  <form (ngSubmit)="submitNotification()" #notifForm="ngForm">
+    <div class="mb-3">
+      <label class="form-label">Title</label>
+      <input type="text" [(ngModel)]="title" name="title">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Message</label>
+      <textarea [(ngModel)]="message" name="message"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Send Notification</button>
+  </form>
+</div>

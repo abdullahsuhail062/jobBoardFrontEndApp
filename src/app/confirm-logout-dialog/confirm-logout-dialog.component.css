@@ -1,0 +1,37 @@
+.title {
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+  
+  .content {
+    text-align: center;
+    font-size: 1rem;
+    margin: 10px 0;
+  }
+  
+  .actions {
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  .btn-cancel {
+    color: #555;
+    background-color: #eee;
+    border-radius: 4px;
+  }
+  
+  .btn-cancel:hover {
+    background-color: #ddd;
+  }
+  
+  .btn-logout {
+    color: white;
+    background-color: #e53935;
+    border-radius: 4px;
+  }
+  
+  .btn-logout:hover {
+    background-color: #c62828;
+  }
+  

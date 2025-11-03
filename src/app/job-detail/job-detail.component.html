@@ -1,0 +1,47 @@
+<div class="container my-4">
+  @if (loading) {
+    <p>Loading job details...</p>
+  } @else if (job) {
+ 
+  <!-- Job Description -->
+ 
+<div class="card shadow-sm mb-4">
+  <div class="card-body d-flex flex-column">
+    <!-- Title -->
+    <h1 class="h4 mb-2">Job Title: {{ job.title }}</h1>
+
+    <!-- Description -->
+    <div class="mb-3">
+      <h5 class="mb-2">Job Description:</h5>
+      <div class="job-description" [innerHTML]="job.jobDescription"></div>
+    </div>
+
+    <!-- Meta info -->
+    <div class="text-muted small mb-2">
+      {{ job.jobType }} • Budget: {{ job.jobBudget }} • Posted on {{ job.createdAt | date:'mediumDate' }}
+    </div>
+
+    <!-- Badges -->
+    <div class="mb-4">
+      <span class="badge bg-light text-dark me-1">{{ job.jobCategory }}</span>
+      <span class="badge bg-light text-dark me-1">{{ job.jobExperience }}</span>
+      <span class="badge bg-light text-dark me-1">{{ job.company }}</span>
+    </div>
+
+    <!-- Button at bottom center -->
+    <div class="text-center mt-auto">
+      <button class="btn btn-primary" (click)="openApplyDialog(job.id)">Submit a Proposal</button>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+     } @else {
+    <div class="alert alert-danger">Job not found.</div>
+  }
+</div>
+
+

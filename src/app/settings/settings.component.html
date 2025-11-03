@@ -1,0 +1,44 @@
+<ul class="list-group mt-3">
+  <li 
+    class="list-group-item d-flex justify-content-between align-items-center edit-item 
+    border-start-0 border-end-0 border-top-0 border-bottom" 
+    (click)="openEditProfileDialog()"
+    style="cursor: pointer;">
+    <span>
+        <mat-icon>edit</mat-icon>
+      Edit Profile
+    </span>
+  </li>
+</ul>
+
+<ul class="list-group mt-3">
+  <li 
+    class="list-group-item d-flex justify-content-between align-items-center delete-item 
+    border-start-0 border-end-0 border-top-0 border-bottom" 
+    (click)="openDeleteAccountDialog()"
+    style="cursor: pointer;">
+    <span>
+        <mat-icon>delete</mat-icon>
+      Delete Account
+    </span>
+  </li>
+</ul>
+
+
+<ul class="list-group mt-3">
+  <li 
+    class="list-group-item d-flex justify-content-between align-items-center 
+    border-start-0 border-end-0 border-top-0 border-bottom"> 
+    <button id="darkModeToggle" class="btn btn-secondary" (click)="toggle()">
+  {{ (isDarkMode$ | async) ? 'Disable Dark Mode' : 'Enable Dark Mode' }}
+</button>
+
+
+  </li>
+ 
+</ul>
+
+
+
+
+

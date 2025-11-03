@@ -1,0 +1,39 @@
+.settings-item:hover {
+  background-color:aliceblue;
+  color: #0d6efd;          
+}
+
+.settings-item:hover i {
+  color: #0d6efd;
+}
+
+.logout-item:hover {
+  background-color:aliceblue;
+  color: #0d6efd;          
+}
+
+.logout-item:hover i {
+  color: #0d6efd;
+}
+
+.dashboard-item:hover {
+  background-color:aliceblue;
+  color: #0d6efd;          
+}
+
+.dashboard-item:hover i {
+  color: #0d6efd;
+}
+
+.help-item:hover {
+  background-color:aliceblue;
+  color: #0d6efd;          
+}
+
+.help-item:hover i {
+  color: #0d6efd;
+}
+
+
+
+

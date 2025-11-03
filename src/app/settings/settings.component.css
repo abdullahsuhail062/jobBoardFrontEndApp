@@ -1,0 +1,22 @@
+.edit-item:hover {
+  background-color:aliceblue;
+  color: #0d6efd;          
+}
+
+.edit-item:hover i {
+  color: #0d6efd;
+}
+
+.delete-item:hover {
+  background-color:aliceblue;
+  color: #0d6efd;          
+}
+
+.delete-item:hover i {
+  color: #0d6efd;
+}
+
+
+
+
+

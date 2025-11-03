@@ -1,0 +1,61 @@
+<div class="modal-header px-3 py-2">
+  <h5 class="modal-title mb-0">Submit Your Proposal</h5>
+  <button type="button" class="btn-close ms-2" (click)="closeDialog()" aria-label="Close"></button>
+</div>
+
+
+<div class="modal-body p-3">
+  <form [formGroup]="proposalForm" (ngSubmit)="submitProposal()">
+    <!-- Cover Letter -->
+    <div class="mb-3">
+      <label for="coverLetter" class="form-label">Cover Letter</label>
+      <textarea
+        id="coverLetter"
+        rows="5"
+        class="form-control"
+        formControlName="coverLetter"
+        placeholder="Describe why you’re the best fit..."
+      ></textarea>
+      @if (proposalForm.get('coverLetter')?.invalid && proposalForm.get('coverLetter')?.touched) {
+        <div class="text-danger">Minimum 20 characters required.</div>
+      }
+    </div>
+
+    <!-- Bid Amount -->
+    <div class="mb-3">
+      <label for="bidAmount" class="form-label">Your Bid Amount ($)</label>
+      <input
+        type="number"
+        id="bidAmount"
+        class="form-control"
+        formControlName="bidAmount"
+        placeholder="Enter your price"
+      />
+      @if (proposalForm.get('bidAmount')?.invalid && proposalForm.get('bidAmount')?.touched) {
+        <div class="text-danger">Please enter a valid amount.</div>
+      }
+    </div>
+
+    <!-- Estimated Time -->
+    <div class="mb-3">
+      <label for="estimatedTime" class="form-label">Estimated Time</label>
+      <input
+        type="text"
+        id="estimatedTime"
+        class="form-control"
+        formControlName="estimatedTime"
+        placeholder="e.g. 3 days or 2 weeks"
+      />
+      @if (proposalForm.get('estimatedTime')?.invalid && proposalForm.get('estimatedTime')?.touched) {
+        <div class="text-danger">Please specify time.</div>
+      }
+    </div>
+
+    <div class="modal-footer d-flex justify-content-center gap-2">
+      <button type="button" class="btn btn-secondary" (click)="closeDialog()">Cancel</button>
+      <button type="submit" class="btn btn-primary" [disabled]="proposalForm.invalid">
+        Submit Proposal
+      </button>
+    </div>
+  </form>
+</div>

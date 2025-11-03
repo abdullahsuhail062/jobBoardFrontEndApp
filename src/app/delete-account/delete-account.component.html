@@ -1,0 +1,43 @@
+
+<form (ngSubmit)="confirmDeletion()">
+  <div class="modal-body">
+
+    <p class="text-danger fw-bold mb-3 text-center user-select-none">
+      This action is permanent. Please enter your password to continue.
+    </p>
+
+    @if (errorMessage) {
+      <div class="text-red fw-bold mb-3 text-center top-5 user-select-none">{{errorMessage}}</div>
+    }
+    @if (isDeleting) {
+      <div class="text-green fw-bold mb-3 text-center top-3 user-select-none">{{'Deleting Account...'}}</div>
+    }
+    <div class="mb-3 position-relative">
+      <label for="password" class="form-label user-select-none">Password</label>
+      <input
+        id="password"
+        [type]="showPassword ? 'text' : 'password'"
+        class="form-control"
+        [(ngModel)]="password"
+        name="password"
+        required
+        placeholder="Enter your password" />
+
+      <button
+        type="button"
+        class="btn btn-link position-absolute top-50 end-0 translate-middle-y me-3 p-0"
+        (click)="toggleShowPassword()">
+        {{ showPassword ? 'Hide' : 'Show' }}
+      </button>
+    </div>
+  </div>
+
+  <div class="modal-footer justify-content-center">
+    <button type="button" class="btn btn-secondary me-1" (click)="cancel()">
+      Cancel
+    </button>
+    <button type="submit" class="btn btn-danger">
+      Delete Account
+    </button>
+  </div>
+</form>

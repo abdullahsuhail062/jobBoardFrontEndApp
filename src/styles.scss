@@ -1,0 +1,285 @@
+/* You can add global styles to this file, and also import other style files */
+
+// Include theming for Angular Material with `mat.theme()`.
+// This Sass mixin will define CSS variables that are used for styling Angular Material
+// components according to the Material 3 design spec.
+// Learn more about theming and how to use it for your application's
+// custom components at https://material.angular.dev/guide/theming
+@use '@angular/material' as mat;
+
+html {
+  @include mat.theme((
+    color: (
+      primary: mat.$azure-palette,
+      tertiary: mat.$blue-palette,
+    ),
+    typography: Roboto,
+    density: 0,
+  ));
+}
+
+body {
+  // Default the application to a light color theme. This can be changed to
+  // `dark` to enable the dark color theme, or to `light dark` to defer to the
+  // user's system settings.
+  color-scheme: light;
+
+  // Set a default background, font and text colors for the application using
+  // Angular Material's system-level CSS variables. Learn more about these
+  // variables at https://material.angular.dev/guide/system-variables
+  background-color: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-body-medium);
+
+  // Reset the user agent margin.
+  margin: 0;
+}
+/* You can add global styles to this file, and also import other style files */
+// styles.scss
+
+// Override variables BEFORE importing Bootstrap
+
+// Then import Bootstrap
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+body.dark-mode {
+background-color: #535252 !important;
+color: #ffffff !important;
+}
+.cdk-overlay-container.dark-mode {
+  .mat-mdc-dialog-container {
+    background-color: #535252 !important;
+    color: #ffffff !important;
+  }
+
+  .mat-mdc-dialog-surface {
+    background-color: #535252 !important;
+  }
+
+  .mat-mdc-dialog-container * {
+    color: #ffffff !important;
+  }
+
+  
+  // Subtle stacking transform
+  .cdk-overlay-pane:nth-of-type(2) {
+    transform: translateY(8px) scale(0.98);
+  }
+
+  .cdk-overlay-pane:nth-of-type(3) {
+    transform: translateY(16px) scale(0.96);
+  }
+
+
+
+
+  // Override Bootstrap list item background
+  .list-group-item {
+    background-color: #535252 !important;
+    border-color: #333 !important;
+    color: #ffffff !important;
+  }
+
+  // Optional: adjust other Bootstrap elements if needed
+  .btn,
+  .form-control,
+  .form-group {
+    background-color: #535252 !important;
+    color: #ffffff !important;
+    border-color: #444 !important;
+  }
+}
+
+.navbar {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  .navbar .navbar-brand,
+  .navbar button,
+  .navbar mat-icon {
+    color: #000000 !important;
+  }
+
+  .dark-mode .mat-mdc-dialog-container .list-group-item:hover,
+.mat-mdc-dialog-container .list-group-item:hover {
+  background-color: #888686 !important;
+  color: #ffffff !important;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+body.dark-mode .btn {
+  background-color: #444 !important;
+  color: #fff !important;
+  border-color: #555 !important;
+}
+
+body.dark-mode .btn:hover {
+  background-color: #555 !important;
+}
+
+/* Shared button styles in dark mode */
+body.dark-mode button,
+.cdk-overlay-container.dark-mode button {
+  background-color: #333 !important;
+  color: #fff !important;
+  border-color: #444 !important;
+}
+
+body.dark-mode button:hover,
+.cdk-overlay-container.dark-mode button:hover {
+  background-color: #444 !important;
+  color: #fff !important;
+}
+
+/* Optional: fix icon button contrast */
+body.dark-mode button mat-icon {
+  color: #fff !important;
+}
+
+/* Optional: light mode fallback */
+// body:not(.dark-mode) button {
+//   background-color: #f8f9fa;
+//   color: #555454;
+// }
+
+.cdk-overlay-container.dark-mode {
+  input[matInput] {
+  color: white;
+  background-color: rgb(100, 99, 99);
+}
+
+}
+
+body.dark-mode .modal-content {
+  background-color: #1c1c1c;
+  color: #fff;
+}
+
+body.dark-mode .accordion-button {
+  background-color: #2b2b2b;
+  color: #fff;
+}
+
+body.dark-mode .accordion-body {
+  background-color: #1c1c1c;
+}
+
+/* Dark mode styling for mat-card in forms */
+body.dark-mode mat-card {
+  background-color: #1f1f1f !important;
+  color: #ffffff !important;
+  border: 1px solid #333;
+}
+
+/* Input fields inside card */
+body.dark-mode .mat-form-field-appearance-fill .mat-form-field-flex {
+  background-color: #2a2a2a !important;
+  color: #ffffff !important;
+}
+
+/* Input text */
+body.dark-mode input.mat-input-element {
+  color: #ffffff !important;
+  background-color: #2a2a2a !important;
+  caret-color: #ffffff !important;
+}
+
+/* Label and error color */
+body.dark-mode .mat-form-field-label,
+body.dark-mode .mat-error {
+  color: #ffcccc !important;
+}
+
+/* Icons (eye, etc.) */
+body.dark-mode .mat-icon {
+  color: #ffffff !important;
+}
+
+/* Button override if needed */
+body.dark-mode .btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+
+/* Hover effect when dark mode is active */
+body.dark-mode .btn-outline-light:hover {
+  background-color: rgba(0, 0, 0, 0.15);
+  color: white !important;
+  border-color: white;
+    font-weight: bold;
+
+}
+
+body.dark-mode .btn-light.text-primary:hover {
+  background-color: #64636322; /* translucent white */
+  color: #90caf9 !important; /* light blue text */
+  font-weight: bold;
+}
+
+#app-splash {
+  position: fixed;
+  inset: 0;
+  background: #ffffff; /* or your brand color */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  z-index: 9999;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.splash-content {
+  text-align: center;
+}
+
+.splash-logo {
+  width: 100px;
+  height: auto;
+  margin-bottom: 1rem;
+  animation: fadeIn 1.2s ease;
+}
+
+.splash-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #ccc;
+  border-top-color: #007bff; /* accent color */
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.splash-hide {
+  opacity: 0;
+  visibility: hidden;
+}
+
+
+
+
+
+
+
+
+

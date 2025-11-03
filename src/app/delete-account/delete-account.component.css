@@ -1,0 +1,7 @@
+.custom-red {
+  background-color: #dc3545 !important;
+  color: white;
+}
+.custom-red:hover {
+  background-color: #bb2d3b !important;
+}

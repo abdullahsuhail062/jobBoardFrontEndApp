@@ -1,0 +1,29 @@
+<h2 mat-dialog-title class="text-center border-bottom pb-2">Edit Profile</h2>
+
+<mat-dialog-content class="px-3 py-2">
+
+  <div class="d-flex flex-column align-items-center mb-4">
+    <img [src]="avatarPreview"
+         class="rounded-circle border shadow-sm"
+         width="100" height="100" alt="" style="object-fit: cover;">
+
+    <label for="avatarInput" class="btn btn-sm btn-outline-primary mt-2">
+      <i class="material-icons me-1">photo_camera</i> Change Picture
+    </label>
+    <input type="file" id="avatarInput" hidden (change)="onFileSelected($event)" accept="image/*" />
+  </div> 
+
+    <mat-label>Full Name </mat-label>
+    <input matInput [(ngModel)]="username" placeholder="Enter your name">
+
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="px-3 pb-2">
+ <div class="d-flex justify-content-end gap-2 mt-3">
+  <button mat-stroked-button color="green" class="px-4" (click)="cancel()">Cancel</button>
+  <button mat-flat-button color="primary" class="px-4" (click)="save()">Save</button>
+</div>
+
+
+</mat-dialog-actions>  

@@ -1,0 +1,102 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-12">
+      <mat-card class="p-4 shadow-sm">
+        <h2 class="text-center mb-4">Signup</h2>
+
+        <!-- Signup Form -->
+        <form [formGroup]="formSignUp" (ngSubmit)="onSubmit()">
+
+          <!-- Username -->
+          <mat-form-field class="w-100 mb-3">
+            <mat-label>Username</mat-label>
+            <input matInput type="text" formControlName="username" placeholder="Enter your username">
+            @if (formSignUp.get('username')?.hasError('required')) {
+              <mat-error>
+                Username is required
+              </mat-error>
+            }
+            @if (formSignUp.get('username')?.hasError('minlength')) {
+              <mat-error>
+                Username must be at least 3 characters long.
+              </mat-error>
+            }
+            @if (formSignUp.get('username')?.errors?.['backend']) {
+              <mat-error>
+                {{ formSignUp.get('username')?.errors?.['backend'] }}
+              </mat-error>
+            }
+
+          </mat-form-field>
+
+          <!-- Email -->
+          <mat-form-field class="w-100 mb-3">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" formControlName="email" placeholder="Enter your email">
+            @if (formSignUp.get('email')?.hasError('required')) {
+              <mat-error>
+                Email address is required.
+              </mat-error>
+            }
+            @if (formSignUp.get('email')?.hasError('email')) {
+              <mat-error>
+                Enter a valid email address.
+              </mat-error>
+            }
+            @if (formSignUp.get('email')?.errors?.['backend']) {
+              <mat-error>
+                {{ formSignUp.get('email')?.errors?.['backend'] }}
+              </mat-error>
+            }
+          </mat-form-field>
+
+          <!-- Password -->
+          <mat-form-field class="w-100 mb-3">
+            <mat-label>Password</mat-label>
+            <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" placeholder="Enter your password">
+            <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
+              <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+            @if (formSignUp.get('password')?.hasError('required')) {
+              <mat-error>
+                Password is required
+              </mat-error>
+            }
+            @if (formSignUp.get('password')?.hasError('strongPassword') && formSignUp.get('password')?.touched) {
+              <mat-error>
+                Password must include uppercase, lowercase, number, special character, and be at least 8 characters.
+              </mat-error>
+            }
+          </mat-form-field>
+
+          <!-- Confirm Password -->
+          <mat-form-field class="w-100 mb-3">
+            <mat-label>Confirm Password</mat-label>
+            <input matInput [type]="hideConfirmPassword ? 'password' : 'text'" formControlName="confirmPassword" placeholder="Confirm your password">
+            <button mat-icon-button matSuffix (click)="hideConfirmPassword = !hideConfirmPassword" type="button">
+              <mat-icon>{{ hideConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+
+
+            @if (formSignUp.get('confirmPassword')?.hasError('passwordMismatch') && formSignUp.get('confirmPassword')?.touched) {
+              <mat-error>
+                Passwords do not match
+              </mat-error>
+            }
+
+          </mat-form-field>
+
+          <!-- Submit Button -->
+          <button type="submit" class="btn btn-primary w-100 mb-3" [disabled]="formSignUp.invalid || loading"> {{ loading ? 'Submitting...' : 'Submit' }}
+
+          </button>
+        </form>
+
+        <!-- Sign-in Link -->
+        <div class="text-center">
+          <p>Already have an account? <a [routerLink]="['/signin']">Sign in</a></p>
+        </div>
+      </mat-card>
+    </div>
+  </div>
+</div>

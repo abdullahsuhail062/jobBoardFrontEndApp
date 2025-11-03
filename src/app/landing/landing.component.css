@@ -1,0 +1,24 @@
+/* Make navbar fixed */
+.navbar.fixed-top {
+  z-index: 1050;
+}
+
+/* Left panel fills viewport height and stays fixed under the navbar */
+.left-panel {
+  position: fixed;
+  top: 56px; /* height of navbar (adjust if different) */
+  bottom: 0;
+  left: 0;
+  width: 33.333%; /* same as col-lg-4 */
+  overflow: hidden; /* no scroll */
+}
+
+/* Right panel starts next to left panel and is scrollable */
+.right-panel {
+  position: absolute;
+  top: 56px; /* below navbar */
+  bottom: 0;
+  right: 0;
+  left: 33.333%; /* match left-panel width */
+  overflow-y: auto;
+}
