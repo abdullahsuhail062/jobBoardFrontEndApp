@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ApiService, Job } from '../api.service';
-import { title } from 'process';
-import { response } from 'express';
 
 @Component({
   selector: 'app-landing',

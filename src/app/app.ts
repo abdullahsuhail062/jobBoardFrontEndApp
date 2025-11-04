@@ -15,9 +15,9 @@ import { take } from 'rxjs';
   selector: 'app-root',
   imports: [RouterOutlet],
   templateUrl: './app.html',
-  styleUrl: './app.scss'
+  styleUrl: './app.css'
 })
-export class AppComponent   {
+export class App   {
   title = 'job-board-webapp';
   role: string  | null = null
   
