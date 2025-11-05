@@ -1,4 +1,8 @@
-import { ApplicationConfig, inject, isDevMode, PLATFORM_ID, provideZoneChangeDetection } from '@angular/core';
+import {
+  ApplicationConfig,
+  isDevMode,
+  provideZoneChangeDetection,
+} from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
@@ -11,31 +15,28 @@ import { authReducer } from './store/auth/auth.reducer';
 import { AuthEffects } from './store/auth/auth.effects';
 import { AuthInterceptor } from './authInterceptor';
 import { entityConfig } from './entity-metadata';
-import { isPlatformBrowser } from '@angular/common';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    // Optional optimization for change detection
+    provideZoneChangeDetection({ eventCoalescing: true }),
+
+    // Routing and HTTP setup
     provideRouter(routes),
     provideHttpClient(withFetch(), withInterceptors([AuthInterceptor])),
+
+    // ✅ NgRx Store setup
     provideStore({ auth: authReducer }),
+    provideEffects([AuthEffects]),
     provideRouterStore(),
     provideEntityData(entityConfig),
-    provideEffects(), // base registration, required
 
-    {
-      provide: 'AUTH_EFFECTS_BROWSER_ONLY',
-      useFactory: () => {
-        const platformId = inject(PLATFORM_ID);
-        return isPlatformBrowser(platformId) ? provideEffects(AuthEffects) : [];
-      },
-    },
-
-    // ✅ Add NgRx Store DevTools (only in dev mode)
+    // ✅ NgRx DevTools (enabled only in dev mode)
     provideStoreDevtools({
-      maxAge: 25,               // keeps last 25 actions
-      logOnly: !isDevMode(),    // restrict extension to log-only in production
-      autoPause: true,          // pauses recording when DevTools window is not open
-      trace: false,             // set true to enable stack traces
+      maxAge: 25,
+      logOnly: !isDevMode(),
+      autoPause: true,
+      trace: false,
       traceLimit: 75,
       connectInZone: true,
     }),

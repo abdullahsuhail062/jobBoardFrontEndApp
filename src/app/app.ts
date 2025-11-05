@@ -21,7 +21,8 @@ export class App   {
   title = 'job-board-webapp';
   role: string  | null = null
   
- constructor(private splashService: SplashService,private darkModeService: DarkModeService ,private authService: Authservice, private router: Router){}
+ constructor(private splashService: SplashService,private darkModeService: DarkModeService ,private authService: Authservice, private router: Router){console.log('service is injected properly');
+ }
 
   ngAfterViewInit() {
     this.splashService.hideSplash();

@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { Inject, inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import * as AuthActions from './auth.actions';
 import { Router } from '@angular/router';
@@ -15,7 +15,8 @@ export class AuthEffects {
   //private router = inject(Router);
   //private apiService = inject(ApiService);
   private platformId = inject(PLATFORM_ID);
-  constructor(private actions$: Actions, private router: Router, private apiService: ApiService
+  private actions$ = inject(Actions)
+  constructor( private router: Router, private apiService: ApiService
   ){ console.log('AuthEffects instance created');}
 
   private isBrowser(): boolean {
