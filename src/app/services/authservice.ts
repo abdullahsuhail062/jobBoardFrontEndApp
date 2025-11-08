@@ -25,6 +25,7 @@ export class Authservice {
   private avatarKey = 'auth_avatar_key';
   private tokenKey = 'auth_token';
   private tokenExpiryKey = 'token_expires_at';
+  private isLoggingOut = false; // Prevent recursive logout calls
 
   private apiUrl= environment.apiBaseUrl
 
@@ -111,14 +112,21 @@ export class Authservice {
 
   /** ✅ Clears store + storage */
   logout(): void {
+    // Prevent recursive logout calls
+    if (this.isLoggingOut) {
+      return;
+    }
+    
+    this.isLoggingOut = true;
     this.removeFromStorage(this.tokenKey);
     this.removeFromStorage(this.tokenExpiryKey);
     this.removeFromStorage(this.avatarKey);
     this.store.dispatch(AuthActions.logout());
-
-    // if (isPlatformBrowser(this.platformId)) {
-    //   this.router.navigate(['/']);
-    // }
+    
+    // Reset flag after a short delay to allow logout to complete
+    setTimeout(() => {
+      this.isLoggingOut = false;
+    }, 100);
   }
 
   /** ✅ Route guard-style role check */
@@ -143,21 +151,23 @@ export class Authservice {
       return jwtDecode<DecodedToken>(token);
     } catch (error) {
       console.error('Invalid token:', error);
-      this.logout();
+      // Only logout if not already logging out
+      if (!this.isLoggingOut) {
+        this.logout();
+      }
       return null;
     }
   }
 
   /** ✅ Helpers */
   isLoggedIn(): boolean {
-    return !!this.getToken();
+    const token = this.getToken();
+    return !!token && !this.isTokenExpired();
   }
 
   getToken(): string | null {
-    if (this.isTokenExpired()) {
-      this.logout();
-      return null;
-    }
+    // Don't call logout here - just return the token or null
+    // Let the calling code handle logout if needed
     return this.getFromStorage(this.tokenKey);
   }
 
@@ -166,8 +176,15 @@ export class Authservice {
     if (!expiry) return true;
 
     const expired = Date.now() > parseInt(expiry, 10);
-    if (expired) this.logout();
+    // Don't call logout here - just return the status
     return expired;
+  }
+  
+  /** Check if token is expired and should trigger logout */
+  checkTokenAndLogoutIfExpired(): void {
+    if (this.isTokenExpired() && !this.isLoggingOut) {
+      this.logout();
+    }
   }
 
   redirectIfLoggedIn(): void {

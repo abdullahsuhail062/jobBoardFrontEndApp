@@ -10,6 +10,8 @@ import { isPlatformBrowser } from '@angular/common';
 @Injectable()
 export class AuthEffects {
   private isInitialLoad = true;
+  private lastLogoutTime = 0;
+  private readonly LOGOUT_DEBOUNCE_MS = 500; // Prevent rapid logout calls
 
   constructor(
     private actions$: Actions,
@@ -41,8 +43,13 @@ export class AuthEffects {
         }
 
         try {
-          const token = localStorage.getItem('token');
+          // Check both token key formats (in case of inconsistency)
+          const token = localStorage.getItem('token') || localStorage.getItem('auth_token');
           const role = localStorage.getItem('role');
+          
+          if (!token || !role) {
+            return { type: '[Auth] No Persisted Login' };
+          }
           
           // Check token expiration before restoring
           const expiry = localStorage.getItem('token_expires_at');
@@ -51,11 +58,22 @@ export class AuthEffects {
             if (expired) {
               console.log('Token expired, clearing auth data');
               localStorage.removeItem('token');
+              localStorage.removeItem('auth_token');
               localStorage.removeItem('role');
               localStorage.removeItem('user');
               localStorage.removeItem('token_expires_at');
+              localStorage.removeItem('auth_avatar_key');
               return { type: '[Auth] Token Expired' };
             }
+          } else {
+            // If no expiry set, clear the token (it's invalid)
+            console.log('No token expiry found, clearing auth data');
+            localStorage.removeItem('token');
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('role');
+            localStorage.removeItem('user');
+            localStorage.removeItem('token_expires_at');
+            return { type: '[Auth] No Valid Token' };
           }
 
           let user = null;
@@ -81,9 +99,11 @@ export class AuthEffects {
           console.error('Error loading auth from localStorage:', error);
           // Clear potentially corrupted data
           localStorage.removeItem('token');
+          localStorage.removeItem('auth_token');
           localStorage.removeItem('role');
           localStorage.removeItem('user');
           localStorage.removeItem('token_expires_at');
+          localStorage.removeItem('auth_avatar_key');
         }
 
         return { type: '[Auth] No Persisted Login' };
@@ -93,8 +113,8 @@ export class AuthEffects {
 
   login$ = createEffect(() => {
     return this.actions$.pipe(
-      tap(a => console.log('login effect received action:', a)),
       ofType(AuthActions.login),
+      tap(a => console.log('login effect received action:', a)),
       switchMap(({ credentials }) =>
         this.apiService.loginUser(credentials).pipe(
           map((response) =>
@@ -118,8 +138,9 @@ export class AuthEffects {
           if (!this.isBrowser()) return;
 
           try {
-            // Always save to localStorage
-            localStorage.setItem('token', action.token);
+            // Always save to localStorage - use auth_token to match AuthService
+            localStorage.setItem('auth_token', action.token);
+            localStorage.setItem('token', action.token); // Also save as token for compatibility
             localStorage.setItem('role', action.role);
             localStorage.setItem('user', JSON.stringify(action.user));
             
@@ -161,8 +182,39 @@ export class AuthEffects {
         ofType(AuthActions.logout),
         tap(() => {
           if (!this.isBrowser()) return;
-          localStorage.clear();
-          this.router.navigate(['/signin']);
+          
+          // Debounce logout to prevent rapid calls
+          const now = Date.now();
+          if (now - this.lastLogoutTime < this.LOGOUT_DEBOUNCE_MS) {
+            console.log('Logout debounced, ignoring duplicate call');
+            return;
+          }
+          this.lastLogoutTime = now;
+          
+          try {
+            console.log('Executing logout');
+            
+            // Clear localStorage
+            localStorage.removeItem('token');
+            localStorage.removeItem('role');
+            localStorage.removeItem('user');
+            localStorage.removeItem('token_expires_at');
+            localStorage.removeItem('auth_token');
+            localStorage.removeItem('auth_avatar_key');
+            
+            // Only navigate if not already on signin/landing page
+            const currentUrl = this.router.url;
+            if (!currentUrl.includes('/signin') && 
+                !currentUrl.includes('/signup') && 
+                currentUrl !== '/') {
+              console.log('Logging out, navigating to signin from', currentUrl);
+              this.router.navigate(['/signin'], { replaceUrl: true });
+            } else {
+              console.log('Already on signin/landing page, skipping navigation');
+            }
+          } catch (error) {
+            console.error('Error in logout effect:', error);
+          }
         })
       );
     },
