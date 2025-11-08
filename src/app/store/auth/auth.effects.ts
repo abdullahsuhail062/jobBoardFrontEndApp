@@ -16,15 +16,15 @@ export class AuthEffects {
     private authService: Authservice,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
-    console.log('AuthEffects instance created');
+    console.log('AuthEffects instance created', { actions: !!this.actions$ });
   }
 
   private isBrowser(): boolean {
     return isPlatformBrowser(this.platformId);
   }
 
-  init$ = createEffect(() =>
-    this.actions$.pipe(
+  init$ = createEffect(() => {
+    return this.actions$.pipe(
       ofType('@ngrx/effects/init'),
       map(() => {
         if (!this.isBrowser()) return { type: '[Auth] Skipped Init (SSR)' };
@@ -41,17 +41,17 @@ export class AuthEffects {
           return { type: '[Auth] No Persisted Login' };
         }
       })
-    )
-  );
+    );
+  });
 
-  login$ = createEffect(() =>
-    this.actions$.pipe(tap(a => console.log('login effect received action:', a)),
+  login$ = createEffect(() => {
+    return this.actions$.pipe(
+      tap(a => console.log('login effect received action:', a)),
       ofType(AuthActions.login),
       switchMap(({ credentials }) =>
         this.apiService.loginUser(credentials).pipe(
           map((response) =>
             AuthActions.loginSuccess({
-            
               token: response.token,
               role: response.role,
               user: response.user
@@ -60,12 +60,12 @@ export class AuthEffects {
           catchError((error) => of(AuthActions.loginFailure({ error })))
         )
       )
-    )
-   );
+    );
+  });
 
   loginRedirect$ = createEffect(
-    () =>
-      this.actions$.pipe(
+    () => {
+      return this.actions$.pipe(
         ofType(AuthActions.loginSuccess),
         tap((action) => {
           if (!this.isBrowser()) return;
@@ -82,20 +82,22 @@ export class AuthEffects {
             this.router.navigate(['/']);
           }
         })
-      ),
+      );
+    },
     { dispatch: false }
   );
 
   logout$ = createEffect(
-    () =>
-      this.actions$.pipe(
+    () => {
+      return this.actions$.pipe(
         ofType(AuthActions.logout),
         tap(() => {
           if (!this.isBrowser()) return;
           localStorage.clear();
           this.router.navigate(['/signin']);
         })
-      ),
+      );
+    },
     { dispatch: false }
   );
 }
