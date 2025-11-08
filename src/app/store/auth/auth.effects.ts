@@ -9,6 +9,8 @@ import { isPlatformBrowser } from '@angular/common';
 
 @Injectable()
 export class AuthEffects {
+  private isInitialLoad = true;
+
   constructor(
     private actions$: Actions,
     private router: Router,
@@ -17,6 +19,13 @@ export class AuthEffects {
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     console.log('AuthEffects instance created', { actions: !!this.actions$ });
+    
+    // Set flag to false after a short delay to allow init to complete
+    if (this.isBrowser()) {
+      setTimeout(() => {
+        this.isInitialLoad = false;
+      }, 1000);
+    }
   }
 
   private isBrowser(): boolean {
@@ -27,19 +36,57 @@ export class AuthEffects {
     return this.actions$.pipe(
       ofType('@ngrx/effects/init'),
       map(() => {
-        if (!this.isBrowser()) return { type: '[Auth] Skipped Init (SSR)' };
-
-        const token = localStorage.getItem('token');
-        const role = localStorage.getItem('role');
-        const user = localStorage.getItem('user')
-          ? JSON.parse(localStorage.getItem('user')!)
-          : null;
-
-        if (token && role) {
-          return AuthActions.loginSuccess({ token, role: role as any, user });
-        } else {
-          return { type: '[Auth] No Persisted Login' };
+        if (!this.isBrowser()) {
+          return { type: '[Auth] Skipped Init (SSR)' };
         }
+
+        try {
+          const token = localStorage.getItem('token');
+          const role = localStorage.getItem('role');
+          
+          // Check token expiration before restoring
+          const expiry = localStorage.getItem('token_expires_at');
+          if (expiry) {
+            const expired = Date.now() > parseInt(expiry, 10);
+            if (expired) {
+              console.log('Token expired, clearing auth data');
+              localStorage.removeItem('token');
+              localStorage.removeItem('role');
+              localStorage.removeItem('user');
+              localStorage.removeItem('token_expires_at');
+              return { type: '[Auth] Token Expired' };
+            }
+          }
+
+          let user = null;
+          const userStr = localStorage.getItem('user');
+          if (userStr) {
+            try {
+              user = JSON.parse(userStr);
+            } catch (e) {
+              console.error('Failed to parse user from localStorage:', e);
+              localStorage.removeItem('user');
+            }
+          }
+
+          if (token && role && (role === 'EMPLOYER' || role === 'FREELANCER')) {
+            console.log('Restoring auth state from localStorage');
+            return AuthActions.loginSuccess({ 
+              token, 
+              role: role as 'EMPLOYER' | 'FREELANCER', 
+              user 
+            });
+          }
+        } catch (error) {
+          console.error('Error loading auth from localStorage:', error);
+          // Clear potentially corrupted data
+          localStorage.removeItem('token');
+          localStorage.removeItem('role');
+          localStorage.removeItem('user');
+          localStorage.removeItem('token_expires_at');
+        }
+
+        return { type: '[Auth] No Persisted Login' };
       })
     );
   });
@@ -70,16 +117,37 @@ export class AuthEffects {
         tap((action) => {
           if (!this.isBrowser()) return;
 
-          localStorage.setItem('token', action.token);
-          localStorage.setItem('role', action.role);
-          localStorage.setItem('user', JSON.stringify(action.user));
+          try {
+            // Always save to localStorage
+            localStorage.setItem('token', action.token);
+            localStorage.setItem('role', action.role);
+            localStorage.setItem('user', JSON.stringify(action.user));
+            
+            // Set token expiration (1 hour from now)
+            const expiresAt = Date.now() + 60 * 60 * 1000;
+            localStorage.setItem('token_expires_at', expiresAt.toString());
 
-          if (action.role === 'EMPLOYER') {
-            this.router.navigate(['/employer-dashboard']);
-          } else if (action.role === 'FREELANCER') {
-            this.router.navigate(['/dashboard']);
-          } else {
-            this.router.navigate(['/']);
+            // Don't navigate during initial load - let guards handle routing
+            if (this.isInitialLoad) {
+              console.log('Skipping navigation during initial load');
+              return;
+            }
+
+            // Only navigate after initial load (i.e., on actual login)
+            const currentUrl = this.router.url;
+            const targetRoute = action.role === 'EMPLOYER' 
+              ? '/employer-dashboard' 
+              : action.role === 'FREELANCER' 
+                ? '/dashboard' 
+                : '/';
+
+            // Only navigate if not already on the target route
+            if (currentUrl !== targetRoute && !currentUrl.startsWith(targetRoute)) {
+              console.log(`Navigating to ${targetRoute} from ${currentUrl}`);
+              this.router.navigate([targetRoute], { replaceUrl: true });
+            }
+          } catch (error) {
+            console.error('Error in loginRedirect effect:', error);
           }
         })
       );

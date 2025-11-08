@@ -13,11 +13,13 @@ export class AuthGuardService implements CanActivate  {
 
   canActivate(): boolean {
     if (this.authService.isLoggedIn()) {
-      this.router.navigate(['/dashboard'], {replaceUrl: true});
-      return false
-      
+      // Get role from store or localStorage to redirect to correct dashboard
+      const role = localStorage.getItem('role');
+      const targetRoute = role === 'EMPLOYER' ? '/employer-dashboard' : '/dashboard';
+      this.router.navigate([targetRoute], {replaceUrl: true});
+      return false;
     }
-    return true
+    return true;
   }
   }
 

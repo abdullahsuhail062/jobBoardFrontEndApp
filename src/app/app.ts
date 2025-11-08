@@ -26,23 +26,13 @@ export class App   {
 
   ngAfterViewInit() {
     this.splashService.hideSplash();
-    this.userRole()
+    // Role-based navigation is handled by AuthEffects
+    // Just track the role for display purposes
+    this.authService.role$.pipe(take(1)).subscribe(role => {
+      this.role = role;
+    });
   }
-
-
-  userRole(): void {
-    this.authService.role$.pipe(take(1)).subscribe(role => {this.role = role})
-    if (this.role=== 'EMPLOYER') {
-      this.router.navigate(['/emploter-dashboard'])
-      
-    }
-
-    if (this.role=== 'FREELANCER') {
-      this.router.navigate(['/dashboard'])
-      
-    }
-    
-  }}
+}
 
 
  
