@@ -14,8 +14,6 @@ import { UserOptupComponent } from './user-optup/user-optup.component';
 import { EmployerDashboardComponent } from './employer-dashboard/employer-dashboard.component';
 import { RoleGuard } from './role-guard.guard';
 import { UnauthorizedComponent } from './pages/unauthorized/unauthorized.component';
-import { AuthEffects } from './store/auth/auth.effects';
-import { provideEffects } from '@ngrx/effects';
 
 
 

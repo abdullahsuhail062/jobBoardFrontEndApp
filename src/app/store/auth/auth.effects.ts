@@ -1,23 +1,23 @@
-import { Inject, inject, Injectable } from '@angular/core';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import * as AuthActions from './auth.actions';
 import { Router } from '@angular/router';
 import { catchError, map, switchMap, tap, of } from 'rxjs';
 import { Authservice } from '../../services/authservice';
 import { ApiService } from '../../api.service';
-import { PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 
 @Injectable()
 export class AuthEffects {
-  //private actions$ = inject(Actions);
-  private authService = inject(Authservice);
-  //private router = inject(Router);
-  //private apiService = inject(ApiService);
-  private platformId = inject(PLATFORM_ID);
-  private actions$ = inject(Actions)
-  constructor( private router: Router, private apiService: ApiService
-  ){ console.log('AuthEffects instance created');}
+  constructor(
+    private actions$: Actions,
+    private router: Router,
+    private apiService: ApiService,
+    private authService: Authservice,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {
+    console.log('AuthEffects instance created');
+  }
 
   private isBrowser(): boolean {
     return isPlatformBrowser(this.platformId);
