@@ -46,7 +46,7 @@
           </mat-form-field>
 
           <!-- Submit Button -->
-          <button type="submit" class="btn btn-primary w-100 mb-3" [disabled]="signinForm.invalid || loading" > {{ loading ? 'Signing in...' : 'Log in' }}
+          <button type="submit" class="btn btn-primary w-100 mb-3" [disabled]="signinForm.invalid || (loading$ | async)" > {{ (loading$ | async) ? 'Signing in...' : 'Log in' }}
 
           </button>
         </form>

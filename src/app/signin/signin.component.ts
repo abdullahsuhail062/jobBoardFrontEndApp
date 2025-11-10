@@ -5,6 +5,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card'; 
 import { Router, RouterLink } from '@angular/router';
+import { AsyncPipe } from '@angular/common';
 import { ApiService } from '../api.service';
 import { FormErrorHandlerService } from '../services/form-error-handler.service';
 import { MatIcon } from '@angular/material/icon';
@@ -17,7 +18,7 @@ import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-signin',
-  imports: [FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatCardModule, RouterLink, MatIcon],
+  imports: [FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatCardModule, RouterLink, MatIcon, AsyncPipe],
   templateUrl: './signin.component.html',
   styleUrl: './signin.component.css'
 })
