@@ -115,18 +115,24 @@ export class AuthEffects {
     return this.actions$.pipe(
       ofType(AuthActions.login),
       tap(a => console.log('login effect received action:', a)),
-      switchMap(({ credentials }) =>
-        this.apiService.loginUser(credentials).pipe(
-          map((response) =>
-            AuthActions.loginSuccess({
+      switchMap(({ credentials }) => {
+        console.log('Login effect: calling API with credentials:', credentials);
+        return this.apiService.loginUser(credentials).pipe(
+          map((response) => {
+            console.log('Login success, response:', response);
+            return AuthActions.loginSuccess({
               token: response.token,
               role: response.role,
               user: response.user
-            })
-          ),
-          catchError((error) => of(AuthActions.loginFailure({ error })))
-        )
-      )
+            });
+          }),
+          catchError((error) => {
+            console.error('Login error:', error);
+            const errorMessage = error?.error?.message || error?.message || 'Login failed. Please check your credentials.';
+            return of(AuthActions.loginFailure({ error: errorMessage }));
+          })
+        );
+      })
     );
   });
 

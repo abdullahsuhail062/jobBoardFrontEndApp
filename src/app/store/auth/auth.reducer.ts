@@ -13,6 +13,12 @@ export const initialState: AuthState = {
 export const authReducer = createReducer(
   initialState,
 
+  on(AuthActions.login, (state) => ({
+    ...state,
+    loading: true,
+    error: null,
+  })),
+
   on(AuthActions.loginSuccess, (state, { token, role, user }) => ({
     ...state,
     token,
@@ -26,6 +32,9 @@ export const authReducer = createReducer(
     ...state,
     error,
     loading: false,
+    token: null,
+    role: null,
+    user: null,
   })),
 
   on(AuthActions.logout, (state) => ({

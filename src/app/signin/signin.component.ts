@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormsModule, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -9,17 +9,11 @@ import { ApiService } from '../api.service';
 import { FormErrorHandlerService } from '../services/form-error-handler.service';
 import { MatIcon } from '@angular/material/icon';
 import { Authservice } from '../services/authservice';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { Store } from '@ngrx/store';
 import * as AuthActions from '../store/auth/auth.actions';
-
-
-
-
-
-
-
-
+import { selectAuthError, selectAuthLoading } from '../store/auth/auth.selectors';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-signin',
@@ -27,53 +21,65 @@ import * as AuthActions from '../store/auth/auth.actions';
   templateUrl: './signin.component.html',
   styleUrl: './signin.component.css'
 })
-
-export class SigninComponent {
-  role: string | null = null;
+export class SigninComponent implements OnInit, OnDestroy {
   private formBuilder = inject(FormBuilder);
-  loading = false
-  hidePassword: boolean = true
-constructor(private store: Store,private authService: Authservice,private apiService: ApiService, private router: Router,private formErrorHandlerService: FormErrorHandlerService){}
+  loading$: Observable<boolean>;
+  error$: Observable<string | null>;
+  hidePassword: boolean = true;
+  private subscriptions = new Subscription();
 
-signinForm = this.formBuilder.group({ email: ['', [Validators.required, Validators.email]],
-  password: ['', [Validators.required]]})
+  constructor(
+    private store: Store,
+    private authService: Authservice,
+    private apiService: ApiService,
+    private router: Router,
+    private formErrorHandlerService: FormErrorHandlerService
+  ) {
+    this.loading$ = this.store.select(selectAuthLoading);
+    this.error$ = this.store.select(selectAuthError);
+  }
 
+  signinForm = this.formBuilder.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required]]
+  });
 
-  onSubmit(){
+  ngOnInit() {
+    // Subscribe to errors and handle them
+    this.subscriptions.add(
+      this.error$.pipe(
+        filter(error => error !== null)
+      ).subscribe(error => {
+        if (error) {
+          console.error('Login error:', error);
+          // You can apply form errors here if needed
+          // this.formErrorHandlerService.applyBackendloginUserErrors(this.signinForm, error);
+        }
+      })
+    );
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
+  }
+
+  onSubmit() {
     if (this.signinForm.valid) {
+      // Only send email and password - role comes from server response
+      const credentials = {
+        email: this.signinForm.value.email!,
+        password: this.signinForm.value.password!
+      };
 
-      const credentials = this.signinForm.value as {email: string, password: string, role: string}
-       this.store.dispatch(AuthActions.login({credentials}));
-       if (credentials) {
-               console.log(credentials,'credentials');
-       }
-        
-  //     this.apiService.loginUser(credentials).subscribe({next: (response) => {this.router.navigate(['/user-optup'],{ replaceUrl: true });
-  //     const token = response.token;
-  //   this.authService.setToken(token)
-  //    this.authService.role$.subscribe(roleValue => {
-  //    this.role = roleValue;
-  //   if ( this.role=== 'EMPLOYER') {
-  //     this.router.navigate(['/employer-dashboard']) 
+      console.log('Dispatching login action with credentials:', credentials);
       
-  //       }
-  //   if (this.role === 'FREELANCER') {
-  //     this.router.navigate(['/dashboard']) 
-    
-    
-  //   }})},
-
-    
-      
-  //     error: (error) =>{
-  //       this.isLoadingFn()
-  //       this.formErrorHandlerService.applyBackendloginUserErrors(this.signinForm, error)}})
-      
-  //   }
-  // }
-
-  // isLoadingFn(){
-  //   this.loading = !this.loading
-  //  }
-
-  }}}
+      // Dispatch login action - effects will handle the API call and navigation
+      this.store.dispatch(AuthActions.login({ credentials }));
+    } else {
+      // Mark all fields as touched to show validation errors
+      Object.keys(this.signinForm.controls).forEach(key => {
+        this.signinForm.get(key)?.markAsTouched();
+      });
+    }
+  }
+}
