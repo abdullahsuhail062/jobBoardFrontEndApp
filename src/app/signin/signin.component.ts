@@ -67,15 +67,17 @@ export class SigninComponent implements OnInit, OnDestroy {
   onSubmit() {
     if (this.signinForm.valid) {
       // Only send email and password - role comes from server response
-      const credentials = {
-        email: this.signinForm.value.email!,
-        password: this.signinForm.value.password!
-      };
+      const credentials = this.signinForm.value
+        // email: this.signinForm.value.email!,
+        // password: this.signinForm.value.password!
+
+        
+      
 
       console.log('Dispatching login action with credentials:', credentials);
       
       // Dispatch login action - effects will handle the API call and navigation
-      this.store.dispatch(AuthActions.login(credentials as any));
+      this.store.dispatch(AuthActions.login({credentials} as any ));
     } else {
       // Mark all fields as touched to show validation errors
       Object.keys(this.signinForm.controls).forEach(key => {
