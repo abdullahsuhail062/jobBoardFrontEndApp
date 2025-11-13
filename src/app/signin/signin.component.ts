@@ -75,7 +75,7 @@ export class SigninComponent implements OnInit, OnDestroy {
       console.log('Dispatching login action with credentials:', credentials);
       
       // Dispatch login action - effects will handle the API call and navigation
-      this.store.dispatch(AuthActions.login({ credentials }));
+      this.store.dispatch(AuthActions.login(credentials as any));
     } else {
       // Mark all fields as touched to show validation errors
       Object.keys(this.signinForm.controls).forEach(key => {
